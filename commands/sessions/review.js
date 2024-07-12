@@ -9,7 +9,7 @@ module.exports = {
         await db.client.connect()
 		if(await db.collections.reviewers.findOne({ uid: interaction.user.id })){
             const session = await db.collections.threads.aggregate([
-                {$match: {active: false}},
+                {$match: {active: false, reviewed: false}},
                 {$sample: {size: 1}}
             ]).toArray()
             await db.client.close()
@@ -19,8 +19,9 @@ module.exports = {
             if(!channel) return interaction.reply("Could not start a review since the channel the thread was made on does not exist.")
             const thread = channel.threads.cache.find(id => id.id == session[0].tid)
             if(!thread) return interaction.reply("Could not start a review since the thread has been deleted or archived.")
-                
+
             interaction.reply(`Found a session! Your review will be on <#${session[0].tid}>`)
+            thread.send(`Review time for <@${session[0].uid}>! Today, <@${interaction.user.id}> will be your reviewer!`)
         } else {
             await db.client.close()
             return interaction.reply("Unauthorized")

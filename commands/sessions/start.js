@@ -18,7 +18,15 @@ module.exports = {
             reason: `${interaction.user.username} has been inactive for 1 hour!`
         });
 
-        await db.collections.threads.insertOne({ uid: interaction.user.id, tid: thread.id, active: true, channel: interaction.channel.id })
+        var startTime = Date.now()
+        await db.collections.threads.insertOne({ 
+            uid: interaction.user.id, 
+            tid: thread.id, 
+            startTime,
+            active: true, 
+            channel: interaction.channel.id 
+        })
+        
         await db.client.close()
 
         const endButton = new ButtonBuilder()
@@ -33,19 +41,27 @@ module.exports = {
         const buttonClick = await reply.awaitMessageComponent()
         if(buttonClick.user.id == interaction.user.id){
             if(buttonClick.customId == "end"){
-                await buttonClick.update({ content: "Session over! Great job!", components: [] })
                 await thread.setLocked(true)
                 await db.client.connect()
 
                 await db.collections.threads.updateOne({uid: interaction.user.id, active: true}, {"$set": {
                     uid: interaction.user.id,
                     tid: thread.id,
-                    active: false
+                    startTime: startTime,
+                    endTime: Date.now(),
+                    active: false,
+                    reviewed: false
                 }})
+
+                
+                const minutes = Math.floor((Date.now() - startTime) / (1000 * 60)).toString().padStart(2, '0');
+                const seconds = Math.floor(((Date.now() - startTime) / 1000) % 60).toString().padStart(2, '0');
+
+                await buttonClick.reply(`Great job! You're done! You worked for \`${minutes}:${seconds}\``);
 
                 await db.client.close()
             }
-        }else {
+        } else {
             buttonClick.reply({ content: `These buttons aren't for you!`, ephemeral: true });
         }
 	},
