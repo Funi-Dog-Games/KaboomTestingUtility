@@ -16,9 +16,19 @@ module.exports = {
             if(session.length == 0) return interaction.reply("There are no sessions to review!")
             
             const channel = await interaction.client.channels.cache.get(session[0].channel)
-            if(!channel) return interaction.reply("Could not start a review since the channel the thread was made on does not exist.")
+            if(!channel){
+                await db.client.connect()
+                await db.collections.threads.deleteOne({ uid: session[0].uid, tid: session[0].tid })
+                await db.client.close()
+                return interaction.reply("Could not start a review since the channel the thread was made on does not exist, removing.")
+            } 
             const thread = channel.threads.cache.find(id => id.id == session[0].tid)
-            if(!thread) return interaction.reply("Could not start a review since the thread has been deleted or archived.")
+            if(!thread){
+                await db.client.connect()
+                await db.collections.threads.deleteOne({ uid: session[0].uid, tid: session[0].tid })
+                await db.client.close()
+                return interaction.reply("Could not start a review since the thread has been deleted or archived, removing.")
+            }
 
             interaction.reply(`Found a session! Your review will be on <#${session[0].tid}>`)
             thread.send(`Review time for <@${session[0].uid}>! Today, <@${interaction.user.id}> will be your reviewer!`)

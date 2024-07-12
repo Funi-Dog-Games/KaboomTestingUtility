@@ -20,6 +20,8 @@ module.exports = {
 				accepted: false,
 				time: (thread.endTime - thread.startTime) / 1000
 			}})
+
+			interaction.reply({content: "Denied", ephemeral: true})
         }
 	},
 };

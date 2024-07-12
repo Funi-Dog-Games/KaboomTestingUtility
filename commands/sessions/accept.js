@@ -20,6 +20,8 @@ module.exports = {
 				accepted: true,
 				time: (thread.endTime - thread.startTime) / 1000
 			}})
+
+			interaction.reply({content: "Accepted", ephemeral: true})
         }
 	},
 };
