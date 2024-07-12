@@ -5,11 +5,27 @@ module.exports = (app) => {
         if(!body || !body.uid) return res.status(404).send("Invalid UID");
 
         await db.client.connect()
-        const thread = db.collections.threads.findOne({ uid: body.uid, active: true })
+        const thread = await db.collections.threads.findOne({ uid: body.uid, active: true })
         if(!thread) return res.status(404).send("Session not found");
-        app.client.channels.cache.find(id => id.id == thread.channel).threads.cache.find(id => id.id == thread.tid).send("Session has been ended automatically!")
+
+        const channel = await app.client.channels.cache.get(thread.channel)
+        if(channel){
+            channel.threads.cache.find(id => id.id == thread.tid).send("Session has been ended automatically!")
+            await db.collections.threads.updateOne({ uid: body.uid, active: true }, {"$set": {
+                uid: thread.uid,
+                tid: thread.tid,
+                channel: thread.channel,
+                active: false
+            }})
+            res.status(200).json({ success: true, message: "Ended"})
+        } else {
+            res.status(404).json({ success: false, error: "Thread not found"})
+        }
+        
+
         await db.client.close()
     })
+    
     return {
         method: "POST",
         route: "/end"
