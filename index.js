@@ -60,5 +60,7 @@ for (const file of apiFiles) {
 }
 
 require("./modules/deploy-commands")()
+require("./modules/db.js").run()
+
 
 client.login(process.env.TOKEN)
