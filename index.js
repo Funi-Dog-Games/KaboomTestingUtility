@@ -7,10 +7,6 @@ const app = express()
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get("/", (req, res) => {
-	res.send("Express server online")
-})
-
 app.listen(process.env.PORT || 3500)
 
 const fs = require('fs')
@@ -49,6 +45,20 @@ for (const file of eventFiles) {
 		client.on(event.name, (...args) => event.execute(...args));
 	}
 }
+
+const apiPath = path.join(__dirname, "api")
+const apiFiles = fs.readdirSync(apiPath).filter(file => file.endsWith('.js'))
+
+for (const file of apiFiles) {
+    const filePath = path.join(apiPath, file)
+    const data = require(filePath)(app)
+    if(data.method && data.route){
+        console.log(`✅ | API route ${data.method} '${data.route}' has been setup successfully`)
+    } else {
+        console.log(`❌ | API route '${filePath}' did not return data.method or did not return data.route`)
+    }
+}
+
 require("./modules/deploy-commands")()
 
 client.login(process.env.TOKEN)
