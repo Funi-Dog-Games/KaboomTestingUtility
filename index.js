@@ -12,6 +12,7 @@ app.listen(process.env.PORT || 3500)
 const fs = require('fs')
 const path = require('path')
 const client = new Discord.Client({ intents: [Discord.GatewayIntentBits.Guilds, Discord.GatewayIntentBits.MessageContent] })
+app.client = client
 require("dotenv").config()
 client.commands = new Discord.Collection()
 

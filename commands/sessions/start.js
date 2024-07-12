@@ -4,8 +4,7 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('start')
 		.setDescription('Start a session'),
-	async execute(interaction) {
-
+    async execute(interaction) {
         await db.client.connect()
         const thr = await db.collections.threads.findOne({ uid: interaction.user.id, active: true })
         if(thr) return interaction.reply(`You already have an active session in thread <#${thr.tid}>`)
