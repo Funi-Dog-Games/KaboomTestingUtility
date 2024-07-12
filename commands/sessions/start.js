@@ -58,7 +58,6 @@ module.exports = {
                 const seconds = Math.floor(((Date.now() - startTime) / 1000) % 60).toString().padStart(2, '0');
 
                 await buttonClick.reply(`Great job! You're done! You worked for \`${minutes}:${seconds}\``);
-
                 await db.client.close()
             }
         } else {
