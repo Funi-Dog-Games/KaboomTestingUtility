@@ -18,7 +18,7 @@ module.exports = {
             reason: `${interaction.user.username} has been inactive for 1 hour!`
         });
 
-        await db.collections.threads.insertOne({ uid: interaction.user.id, tid: thread.id, active: true })
+        await db.collections.threads.insertOne({ uid: interaction.user.id, tid: thread.id, active: true, channel: interaction.channel.id })
         await db.client.close()
 
         const endButton = new ButtonBuilder()
