@@ -1,10 +1,15 @@
 const { SlashCommandBuilder, ThreadAutoArchiveDuration, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
-
+const db = require("../../modules/db.js")
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('start')
 		.setDescription('Start a session'),
 	async execute(interaction) {
+
+        await db.client.connect()
+        const thr = await db.collections.threads.findOne({ uid: interaction.user.id })
+        if(thr) return interaction.reply(`You already have an active session in thread <#${thr.tid}>`)
+
 		await interaction.deferReply();
         const sentMsg = await interaction.editReply("Session Started!");
 
@@ -13,6 +18,9 @@ module.exports = {
             autoArchiveDuration: ThreadAutoArchiveDuration.OneHour,
             reason: `${interaction.user.username} has been inactive for 1 hour!`
         });
+
+        await db.collections.threads.insertOne({ uid: interaction.user.id, tid: thread.id })
+        await db.client.close()
 
         const endButton = new ButtonBuilder()
         .setCustomId("end")

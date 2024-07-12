@@ -29,5 +29,4 @@ module.exports = {
             await client.close();
         }
     },
-    
 }
