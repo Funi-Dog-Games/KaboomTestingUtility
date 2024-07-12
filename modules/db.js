@@ -21,6 +21,7 @@ module.exports = {
             const db = client.db(process.env.DATABASENAME)
             this.databases.main = db
             this.collections.threads = db.collection(process.env.THREADSCLUSTERNAME)
+            this.collections.reviewers = db.collection(process.env.REVIEWERSCLUSTER)
 
             // ping
             await db.command({ ping: 1 });

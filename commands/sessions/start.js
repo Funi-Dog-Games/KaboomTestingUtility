@@ -37,7 +37,7 @@ module.exports = {
                 await thread.setLocked(true)
                 await db.client.connect()
 
-                db.collections.threads.updateOne({uid: interaction.user.id, active: true}, {"$set": {
+                await db.collections.threads.updateOne({uid: interaction.user.id, active: true}, {"$set": {
                     uid: interaction.user.id,
                     tid: thread.id,
                     active: false
