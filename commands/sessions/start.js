@@ -7,7 +7,7 @@ module.exports = {
 	async execute(interaction) {
 
         await db.client.connect()
-        const thr = await db.collections.threads.findOne({ uid: interaction.user.id })
+        const thr = await db.collections.threads.findOne({ uid: interaction.user.id, active: true })
         if(thr) return interaction.reply(`You already have an active session in thread <#${thr.tid}>`)
 
 		await interaction.deferReply();
@@ -36,12 +36,15 @@ module.exports = {
             if(buttonClick.customId == "end"){
                 await buttonClick.update({ content: "Session over! Great job!", components: [] })
                 await thread.setLocked(true)
-                
-                db.collections.threads.updateOne({uid: interaction.user.id}, {"$set": {
+                await db.client.connect()
+
+                db.collections.threads.updateOne({uid: interaction.user.id, active: true}, {"$set": {
                     uid: interaction.user.id,
                     tid: thread.id,
                     active: false
                 }})
+
+                await db.client.close()
             }
         }else {
             buttonClick.reply({ content: `These buttons aren't for you!`, ephemeral: true });
