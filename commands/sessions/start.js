@@ -19,7 +19,7 @@ module.exports = {
             reason: `${interaction.user.username} has been inactive for 1 hour!`
         });
 
-        await db.collections.threads.insertOne({ uid: interaction.user.id, tid: thread.id })
+        await db.collections.threads.insertOne({ uid: interaction.user.id, tid: thread.id, active: true })
         await db.client.close()
 
         const endButton = new ButtonBuilder()
@@ -36,6 +36,12 @@ module.exports = {
             if(buttonClick.customId == "end"){
                 await buttonClick.update({ content: "Session over! Great job!", components: [] })
                 await thread.setLocked(true)
+                
+                db.collections.threads.updateOne({uid: interaction.user.id}, {"$set": {
+                    uid: interaction.user.id,
+                    tid: thread.id,
+                    active: false
+                }})
             }
         }else {
             buttonClick.reply({ content: `These buttons aren't for you!`, ephemeral: true });
