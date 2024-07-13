@@ -21,8 +21,10 @@ module.exports = {
                 await db.collections.threads.deleteOne({ uid: session[0].uid, tid: session[0].tid })
                 await db.client.close()
                 return interaction.reply("Could not start a review since the channel the thread was made on does not exist, removing.")
-            } 
+            }
+             
             const thread = channel.threads.cache.find(id => id.id == session[0].tid)
+            
             if(!thread){
                 await db.client.connect()
                 await db.collections.threads.deleteOne({ uid: session[0].uid, tid: session[0].tid })
