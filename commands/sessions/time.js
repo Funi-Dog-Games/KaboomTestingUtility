@@ -18,8 +18,9 @@ module.exports = {
             }
         })
 
-        const minutes = Math.floor(s / 60).toString().padStart(2, '0');
-        const seconds = Math.floor(s % 60).toString().padStart(2, '0');
-        interaction.reply(`You have ${minutes}:${seconds}!`)
+        const hours = Math.floor(s / (60 * 60)).toString().padStart(2, '0')
+		const minutes = Math.floor((s / 60) % 60).toString().padStart(2, '0');
+		const seconds = Math.floor(s % 60).toString().padStart(2, '0');
+        interaction.reply(`You have ${hours}:${minutes}:${seconds}!`)
 	},
 };

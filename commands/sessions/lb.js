@@ -27,13 +27,14 @@ module.exports = {
         .setColor("Random")
 
         const dPromise = data.map(async (item, index) => {
-            const minutes = Math.floor(item.time / 60).toString().padStart(2, '0');
+            const hours = Math.floor(item.time / (60 * 60)).toString().padStart(2, '0')
+            const minutes = Math.floor((item.time / 60) % 60).toString().padStart(2, '0');
             const seconds = Math.floor(item.time % 60).toString().padStart(2, '0');
             try {
                 const user = await interaction.client.users.cache.find(id => id.id === item.uid)
-                return `#${index + 1} - <@${user.id}>: \`${minutes}:${seconds}\``
+                return `#${index + 1} - <@${user.id}>: \`${hours}:${minutes}:${seconds}\``
             } catch {
-                return `#${index + 1} - *unknown user*: \`${minutes}:${seconds}\``
+                return `#${index + 1} - *unknown user*: \`${hours}:${minutes}:${seconds}\``
             }
         })
 
