@@ -5,7 +5,8 @@ module.exports = (app) => {
         var data = await db.collections.threads.find({
             time: {
                 $exists: 1
-            }
+            },
+            accepted: true
         }, {
             uid: 1, time: 1
         }).sort({

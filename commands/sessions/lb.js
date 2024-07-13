@@ -10,7 +10,8 @@ module.exports = {
 		var data = await db.collections.threads.find({
             time: {
                 $exists: 1
-            }
+            },
+            accepted: true
         }, {
             uid: 1, time: 1
         }).sort({
@@ -47,7 +48,7 @@ module.exports = {
             const hours = Math.floor(item.time / (60 * 60)).toString().padStart(2, '0')
             const minutes = Math.floor((item.time / 60) % 60).toString().padStart(2, '0');
             const seconds = Math.floor(item.time % 60).toString().padStart(2, '0');
-            
+
             try {
                 const user = await interaction.client.users.cache.find(id => id.id === item.uid)
                 return `#${index + 1} - <@${user.id}>: \`${hours}:${minutes}:${seconds}\``
