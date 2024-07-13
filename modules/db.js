@@ -22,6 +22,7 @@ module.exports = {
             this.databases.main = db
             this.collections.threads = db.collection(process.env.THREADSCLUSTERNAME)
             this.collections.reviewers = db.collection(process.env.REVIEWERSCLUSTER)
+            this.collections.users = db.collection(process.env.USERSCLUSTER)
 
             // ping
             await db.command({ ping: 1 });
