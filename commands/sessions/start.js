@@ -38,30 +38,45 @@ module.exports = {
         .addComponents([endButton])
 
         const reply = await thread.send({ content: `<@${interaction.user.id}>, while you work, post images or summaries of what you're doing!`, components: [actionRow] })
-        const buttonClick = await reply.awaitMessageComponent()
-        if(buttonClick.user.id == interaction.user.id){
-            if(buttonClick.customId == "end"){
-                await thread.setLocked(true)
-                await db.client.connect()
+        async function connect(){
+            const buttonClick = await reply.awaitMessageComponent()
 
-                await db.collections.threads.updateOne({uid: interaction.user.id, active: true}, {"$set": {
-                    uid: interaction.user.id,
-                    tid: thread.id,
-                    startTime: startTime,
-                    endTime: Date.now(),
-                    active: false,
-                    reviewed: false
-                }})
+            await db.client.connect()
+            const isReviewer = await db.collections.reviewers.findOne({ uid: buttonClick.user.id }) != undefined
+            await db.client.close()
 
-                
-                const minutes = Math.floor((Date.now() - startTime) / (1000 * 60)).toString().padStart(2, '0');
-                const seconds = Math.floor(((Date.now() - startTime) / 1000) % 60).toString().padStart(2, '0');
+            if(buttonClick.user.id == interaction.user.id || isReviewer){
+                if(buttonClick.customId == "end"){
+                    await thread.setLocked(true)
+                    await db.client.connect()
 
-                await buttonClick.reply(`Great job! You're done! You worked for \`${minutes}:${seconds}\``);
-                await db.client.close()
+                    await db.collections.threads.updateOne({uid: interaction.user.id, active: true}, {"$set": {
+                        uid: interaction.user.id,
+                        tid: thread.id,
+                        startTime: startTime,
+                        endTime: Date.now(),
+                        active: false,
+                        reviewed: false
+                    }})
+
+                    if(isReviewer && interaction.user.id != buttonClick.user.id){
+                        buttonClick.channel.send("A reviewer has ended your session.")
+                    }
+                    
+                    const minutes = Math.floor((Date.now() - startTime) / (1000 * 60)).toString().padStart(2, '0');
+                    const seconds = Math.floor(((Date.now() - startTime) / 1000) % 60).toString().padStart(2, '0');
+
+                    await buttonClick.reply(`Great job! You're done! You worked for \`${minutes}:${seconds}\``);
+                    await db.client.close()
+                } else {
+                    return connect()
+                }
+            } else {
+                buttonClick.reply({ content: `These buttons aren't for you!`, ephemeral: true });
+                return connect()
             }
-        } else {
-            buttonClick.reply({ content: `These buttons aren't for you!`, ephemeral: true });
         }
+
+        connect()
 	},
 };
