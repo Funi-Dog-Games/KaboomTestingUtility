@@ -2,7 +2,7 @@ const db = require("../modules/db")
 module.exports = (app) => {
     app.post("/end", async (req, res) => {
         const { body } = req
-        if(!body || !body.uid) return res.status(404).send("Invalid UID");
+        if(!body || !body.uid) return res.status(404).json({ success: true, message: "UID not provided"})
 
         await db.client.connect()
         const thread = await db.collections.threads.findOne({ uid: body.uid, active: true })
