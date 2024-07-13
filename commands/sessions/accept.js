@@ -35,7 +35,9 @@ module.exports = {
 			}
 
 			interaction.reply({content: "Accepted", ephemeral: true})
-        }
+        } else {
+			interaction.reply({ content: "You are not a reviewer", ephemeral: true })
+		}
 
 		await db.client.close()
 	},

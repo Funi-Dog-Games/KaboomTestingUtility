@@ -36,7 +36,7 @@ module.exports = {
             thread.send(`Review time for <@${session[0].uid}>! Today, <@${interaction.user.id}> will be your reviewer!`)
         } else {
             await db.client.close()
-            return interaction.reply("Unauthorized")
+            interaction.reply({ content: "You are not a reviewer", ephemeral: true })
         }
 	},
 };

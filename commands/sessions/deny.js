@@ -22,6 +22,8 @@ module.exports = {
 			}})
 
 			interaction.reply({content: "Denied", ephemeral: true})
-        }
+        } else {
+			interaction.reply({ content: "You are not a reviewer", ephemeral: true })
+		}
 	},
 };
