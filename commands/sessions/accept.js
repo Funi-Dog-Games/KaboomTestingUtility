@@ -12,7 +12,7 @@ module.exports = {
 			if(!thread) return interaction.reply("This is not a reviewable session!")
 
 			interaction.channel.send("Congrats! This session has been approved!")
-			db.collections.threads.updateOne({ tid: interaction.channel.id, active: false, reviewed: false }, {"$set": {
+			await db.collections.threads.updateOne({ tid: interaction.channel.id, active: false, reviewed: false }, {"$set": {
 				uid: thread.uid,
 				tid: thread.tid,
 				active: false,
@@ -21,7 +21,22 @@ module.exports = {
 				time: (thread.endTime - thread.startTime) / 1000
 			}})
 
+			const user = await db.collections.users.findOne({ uid: interaction.user.id })
+			if(user){
+				await db.collections.users.updateOne({ uid: interaction.user.id }, {"$set": {
+					uid: interaction.user.id,
+					quota: user.quota + ((thread.endTime - thread.startTime) / 1000)
+				}})
+			} else {
+				await db.collections.users.insertOne({
+					uid: interaction.user.id,
+					quota: (thread.endTime - thread.startTime) / 1000
+				})
+			}
+
 			interaction.reply({content: "Accepted", ephemeral: true})
         }
+
+		await db.client.close()
 	},
 };
