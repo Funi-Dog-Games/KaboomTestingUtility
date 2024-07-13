@@ -15,6 +15,8 @@ module.exports = {
         if(quota.requireQuota == false) return interaction.reply("Quota is disabled.")
         if(data.length == 0) return interaction.reply("No users");
 
+        
+
         const embed = new EmbedBuilder()
         .setTitle("Quota")
 
@@ -33,6 +35,12 @@ module.exports = {
 
         const description = (await Promise.all(dPromise)).join("\n")
         embed.setDescription(description)
+        
+        await db.client.connect()
+        await db.collections.users.updateMany({ quota: { $exists: 1 } }, {"$set": {
+            quota: 0
+        }})
+        await db.client.close()
 
         interaction.reply({content: "Quota has ben reset", embeds: [embed]})
 	},
