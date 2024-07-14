@@ -42,7 +42,7 @@ module.exports = {
             }
         });
 
-        users.sort(function(a, b){return a.time - b.time})
+        users.sort(function(a, b){return b.time - a.time})
 
         const dPromise = users.map(async (item, index) => {
             const hours = Math.floor(item.time / (60 * 60)).toString().padStart(2, '0')
