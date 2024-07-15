@@ -16,7 +16,7 @@ module.exports = {
 
 			const minutes = (await interaction.options.getInteger("minutes") || ((thread.endTime - thread.startTime) / 1000) / 60) * 60
 
-			interaction.channel.send(`Congrats! This session has been approved!${minutes != (thread.endTime - thread.startTime) / 1000 ? ` However, you only got ${minutes} minutes` : ""}`)
+			interaction.channel.send(`Congrats! This session has been approved!${minutes != (thread.endTime - thread.startTime) / 1000 ? ` However, you only got ${minutes / 60} minutes` : ""}`)
 			await db.collections.threads.updateOne({ tid: interaction.channel.id, active: false, reviewed: false }, {"$set": {
 				uid: thread.uid,
 				tid: thread.tid,
