@@ -4,7 +4,7 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('accept')
 		.setDescription('Accept the current thread (reviewers only)')
-		.addStringOption(o => 
+		.addIntegerOption(o => 
 			o.setName("minutes").setDescription("How many minutes to give").setRequired(false)
 		),
 	async execute(interaction) {
@@ -14,9 +14,9 @@ module.exports = {
 			const thread = await db.collections.threads.findOne({ tid: interaction.channel.id, active: false, reviewed: false })
 			if(!thread) return interaction.reply("This is not a reviewable session!")
 
-			const minutes = interaction.options.getString("minutes") || (thread.endTime - thread.startTime) / 1000
+			const minutes = await interaction.options.getInteger("minutes") || (thread.endTime - thread.startTime) / 1000
 
-			interaction.channel.send("Congrats! This session has been approved!")
+			interaction.channel.send(`Congrats! This session has been approved!${minutes != (thread.endTime - thread.startTime) / 1000 ? ` However, you only got ${minutes} minutes` : ""}`)
 			await db.collections.threads.updateOne({ tid: interaction.channel.id, active: false, reviewed: false }, {"$set": {
 				uid: thread.uid,
 				tid: thread.tid,
@@ -26,15 +26,15 @@ module.exports = {
 				time: minutes
 			}})
 
-			const user = await db.collections.users.findOne({ uid: interaction.user.id })
+			const user = await db.collections.users.findOne({ uid: thread.uid })
 			if(user){
-				await db.collections.users.updateOne({ uid: interaction.user.id }, {"$set": {
+				await db.collections.users.updateOne({ uid: thread.uid }, {"$set": {
 					uid: interaction.user.id,
 					quota: user.quota + minutes
 				}})
 			} else {
 				await db.collections.users.insertOne({
-					uid: interaction.user.id,
+					uid: thread.uid,
 					quota: minutes
 				})
 			}
