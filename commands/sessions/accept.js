@@ -14,7 +14,7 @@ module.exports = {
 			const thread = await db.collections.threads.findOne({ tid: interaction.channel.id, active: false, reviewed: false })
 			if(!thread) return interaction.reply("This is not a reviewable session!")
 
-			const minutes = await interaction.options.getInteger("minutes") || (thread.endTime - thread.startTime) / 1000
+			const minutes = (await interaction.options.getInteger("minutes") || ((thread.endTime - thread.startTime) / 1000) / 60) * 60
 
 			interaction.channel.send(`Congrats! This session has been approved!${minutes != (thread.endTime - thread.startTime) / 1000 ? ` However, you only got ${minutes} minutes` : ""}`)
 			await db.collections.threads.updateOne({ tid: interaction.channel.id, active: false, reviewed: false }, {"$set": {
