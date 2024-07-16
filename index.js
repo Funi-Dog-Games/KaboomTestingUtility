@@ -1,20 +1,19 @@
 // Remember to change deploy-commands back to gloabl scope
 const Discord = require("discord.js")
-
+require("dotenv").config()
 const express = require('express')
 const bodyParser = require('body-parser');
 const app = express()
 
 app.use(express.json())
 app.use(bodyParser.urlencoded({ extended: true }));
-
 app.listen(process.env.PORT || 3500)
 
 const fs = require('fs')
 const path = require('path')
 const client = new Discord.Client({ intents: [Discord.GatewayIntentBits.Guilds, Discord.GatewayIntentBits.MessageContent] })
 app.client = client
-require("dotenv").config()
+
 client.commands = new Discord.Collection()
 
 const foldersPath = path.join(__dirname, 'commands');
