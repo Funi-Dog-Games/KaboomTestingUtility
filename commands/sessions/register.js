@@ -15,7 +15,7 @@ module.exports = {
 		const user = interaction.options.getUser("user")
         const username = interaction.options.getString("username")
 
-        const robloxID = await noblox.getIdFromUsername(user)
+        const robloxID = await noblox.getIdFromUsername(username)
         if(!robloxID) return interaction.reply({ content: "Invalid user", ephemeral: true })
 
         await db.client.connect()
