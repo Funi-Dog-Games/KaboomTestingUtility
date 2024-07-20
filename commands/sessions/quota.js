@@ -9,7 +9,7 @@ module.exports = {
 		if(quota.requireQuota == false) return interaction.reply("There is no quota set!");
 		await db.client.connect();
 		const data = await db.collections.users.findOne({ uid: interaction.user.id })
-		if(!data || !data.quota) return interaction.reply(`Time: 0:00\nQuota: ${quota.hours} hours\nMet: No`)
+		if(data == undefined || data.quota == undefined) return interaction.reply(`Time: 0:00\nQuota: ${quota.hours} hours\nMet: No`)
 		await db.client.close()
 
 		const hours = Math.floor(data.quota / (60 * 60)).toString().padStart(2, '0')

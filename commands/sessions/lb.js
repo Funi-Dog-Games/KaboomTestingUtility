@@ -53,7 +53,7 @@ module.exports = {
                 const user = await interaction.client.users.cache.find(id => id.id === item.uid)
                 return `#${index + 1} - <@${user.id}>: \`${hours}:${minutes}:${seconds}\``
             } catch {
-                return `#${index + 1} - *unknown user*: \`${hours}:${minutes}:${seconds}\``
+                return `#${index + 1} - <@${item.uid}>: \`${hours}:${minutes}:${seconds}\``
             }
         })
 

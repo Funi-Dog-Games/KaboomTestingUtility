@@ -56,6 +56,7 @@ module.exports = {
                         startTime: startTime,
                         endTime: Date.now(),
                         active: false,
+                        reviewing: false,
                         reviewed: false
                     }})
 
