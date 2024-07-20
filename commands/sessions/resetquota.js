@@ -18,6 +18,8 @@ module.exports = {
         const embed = new EmbedBuilder()
         .setTitle("Quota")
 
+        data.sort(function(a,b) {return b.quota-a.quota})
+
         const dPromise = data.map(async (item) => {
             const hours = Math.floor(item.quota / (60 * 60)).toString().padStart(2, '0')
             const minutes = Math.floor((item.quota / 60) % 60).toString().padStart(2, '0');
