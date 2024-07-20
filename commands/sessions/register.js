@@ -26,7 +26,7 @@ module.exports = {
             }})
         } else {
             await db.collections.users.insertOne({
-                uid: interaction.user.id,
+                uid: user.id,
                 quota: 0,
                 ruid: robloxID
             })
