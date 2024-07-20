@@ -18,7 +18,6 @@ module.exports = {
             time: 1
         }).toArray()
 
-        data = data.slice(1, 10)
         await db.client.close()
 
         if(!data) return interaction.reply("No approved sessions found!")

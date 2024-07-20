@@ -32,11 +32,14 @@ module.exports = {
                 return interaction.reply({ content: "Could not start a review since the thread has been deleted or archived, removing.", ephemeral: true })
             }
 
-            interaction.reply({ content: `Found a session! Your review will be on <#${session[0].tid}>`, ephemeral: true })
-            thread.send(`Review time for <@${session[0].uid}>! Today, <@${interaction.user.id}> will be your reviewer!`)
+            await db.client.connect()
             await db.collections.threads.updateOne({ tid: session.tid }, {"$set": {
                 reviewing: true
             }})
+            await db.client.close()
+            
+            interaction.reply({ content: `Found a session! Your review will be on <#${session[0].tid}>`, ephemeral: true })
+            thread.send(`Review time for <@${session[0].uid}>! Today, <@${interaction.user.id}> will be your reviewer!`)
         } else {
             await db.client.close()
             interaction.reply({ content: "You are not a reviewer", ephemeral: true })
