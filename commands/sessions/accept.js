@@ -10,26 +10,25 @@ module.exports = {
 	async execute(interaction) {
 		await db.client.connect()
 		if(await db.collections.reviewers.findOne({ uid: interaction.user.id })){
-            if(!interaction.channel.isThread()) return interaction.reply("This command can only be ran in threads!");
+            if(!interaction.channel.isThread()) return interaction.reply({ content: "This command can only be ran in threads!", ephemeral: true });
 			const thread = await db.collections.threads.findOne({ tid: interaction.channel.id, active: false, reviewed: false })
-			if(!thread) return interaction.reply("This is not a reviewable session!")
+			if(!thread) return interaction.reply({ content: "This is not a reviewable session!", ephemeral: true })
+			if(thread.reviewing == false) return interaction.reply({ content: "You cannot manually review a session, you must run /review first!", ephemeral: true })
 
 			const minutes = (await interaction.options.getInteger("minutes") || ((thread.endTime - thread.startTime) / 1000) / 60) * 60
 
-			interaction.channel.send(`Congrats! This session has been approved!${minutes != (thread.endTime - thread.startTime) / 1000 ? ` However, you only got ${minutes / 60} minutes` : ""}`)
+			interaction.channel.send(`Congrats! This session has been approved!${minutes != (thread.endTime - thread.startTime) / 1000 ? ` However, you received ${minutes / 60} minutes.` : ""}`)
 			await db.collections.threads.updateOne({ tid: interaction.channel.id, active: false, reviewed: false }, {"$set": {
-				uid: thread.uid,
-				tid: thread.tid,
 				active: false,
 				reviewed: true,
 				accepted: true,
+				reviewing: false,
 				time: minutes
 			}})
 
 			const user = await db.collections.users.findOne({ uid: thread.uid })
 			if(user){
 				await db.collections.users.updateOne({ uid: thread.uid }, {"$set": {
-					uid: interaction.user.id,
 					quota: user.quota + minutes
 				}})
 			} else {
