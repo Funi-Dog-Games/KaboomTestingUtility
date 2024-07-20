@@ -9,7 +9,7 @@ module.exports = {
             o.setName("user").setDescription("User to bridge").setRequired(true)
         )
         .addStringOption(o => 
-            o.setName("username").setDescription("Roblox username of the user")
+            o.setName("username").setDescription("Roblox username of the user").setRequired(true)
         ),
 	async execute(interaction) {
 		const user = interaction.options.getUser("user")
