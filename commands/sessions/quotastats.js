@@ -4,8 +4,8 @@ const quota = require("../../configuration/quota.json")
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('resetquota')
-		.setDescription('Reset everyone\'s quota and display those who did and did not pass'),
+		.setName('quotastats')
+		.setDescription('View quota statistics'),
 	async execute(interaction) {
 		await db.client.connect()
         if(!await db.collections.reviewers.findOne({ uid: interaction.user.id })) return interaction.reply({ message: "You are not a reviewer", ephemeral: true })
@@ -13,7 +13,7 @@ module.exports = {
         await db.client.close()
 
         if(quota.requireQuota == false) return interaction.reply({ content: "Quota is disabled.", ephemeral: true })
-            if(data.length == 0) return interaction.reply({ content: "No users", ephemeral: true });
+        if(data.length == 0) return interaction.reply({ content: "No users", ephemeral: true });
 
         const embed = new EmbedBuilder()
         .setTitle("Quota")
@@ -33,13 +33,7 @@ module.exports = {
 
         const description = (await Promise.all(dPromise)).join("\n")
         embed.setDescription(description)
-        
-        await db.client.connect()
-        await db.collections.users.updateMany({ quota: { $exists: 1 } }, {"$set": {
-            quota: 0
-        }})
-        await db.client.close()
 
-        interaction.reply({content: "Quota has ben reset", embeds: [embed]})
+        interaction.reply({content: "Here is your quota report!", embeds: [embed], ephemeral: true})
 	},
 };
