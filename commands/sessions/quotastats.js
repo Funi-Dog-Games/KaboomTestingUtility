@@ -27,7 +27,7 @@ module.exports = {
                 const user = await interaction.client.users.cache.find(id => id.id === item.uid)
                 return `${Math.floor(item.quota / (60 * 60)) >= quota.hours ? "✅" : "❌"} | <@${user.id}>: \`${hours}:${minutes}:${seconds}\``
             } catch {
-                return `${Math.floor(item.quota / (60 * 60)) >= quota.hours ? "✅" : "❌"} | UID ${user.id}: \`${hours}:${minutes}:${seconds}\``
+                return `${Math.floor(item.quota / (60 * 60)) >= quota.hours ? "✅" : "❌"} | <@${item.uid}>: \`${hours}:${minutes}:${seconds}\``
             }
         })
 
