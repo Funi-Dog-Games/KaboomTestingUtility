@@ -10,7 +10,7 @@ module.exports = (app) => {
         }, {
             uid: 1, time: 1
         }).sort({
-            time: 1
+            time: -1
         }).toArray()
         data = data.map((item, index) => ({
             uid: item.uid,

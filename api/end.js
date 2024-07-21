@@ -2,7 +2,7 @@ const { MongoDBCollectionNamespace } = require("mongodb")
 const db = require("../modules/db")
 module.exports = (app) => {
     app.post("/end", async (req, res) => {
-        const { body } = req.body
+        const { body } = req
         if(!body || !body.ruid) return res.status(400).json({ success: false, message: "RUID not provided" })
         await db.client.connect()
         const user = await db.collections.users.findOne({ ruid: body.ruid })
