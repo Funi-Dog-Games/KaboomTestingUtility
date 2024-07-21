@@ -23,9 +23,9 @@ module.exports = (app) => {
                 s = s + entry.time
             }
         })
-        const hours = Math.floor((s / (60 * 60))).toString().padStart(2, '0');
-        const minutes = Math.floor((s / 60) % 60).toString().padStart(2, '0');
-        const seconds = Math.floor(s % 60).toString().padStart(2, '0');
+        const hours = Math.floor((s / (60 * 60)))
+        const minutes = Math.floor((s / 60) % 60)
+        const seconds = Math.floor(s % 60)
         return res.status(200).json({ success: true, data: { hours, minutes, seconds } })
     })
     return {
