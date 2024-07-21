@@ -13,7 +13,7 @@ module.exports = {
             if(!interaction.channel.isThread()) return interaction.reply({ content: "This command can only be ran in threads!", ephemeral: true });
 			const thread = await db.collections.threads.findOne({ tid: interaction.channel.id, active: false, reviewed: false })
 			if(!thread) return interaction.reply({ content: "This is not a reviewable session!", ephemeral: true })
-			if(thread.reviewing == false) return interaction.reply({ content: "You cannot manually review a session, you must run /review first!", ephemeral: true })
+			if(thread.reviewing != true) return interaction.reply({ content: "You cannot manually review a session, you must run /review first!", ephemeral: true })
 
 			const minutes = (await interaction.options.getInteger("minutes") || ((thread.endTime - thread.startTime) / 1000) / 60) * 60
 

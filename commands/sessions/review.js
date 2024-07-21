@@ -33,7 +33,7 @@ module.exports = {
             }
 
             await db.client.connect()
-            await db.collections.threads.updateOne({ tid: session.tid }, {"$set": {
+            await db.collections.threads.updateOne({ tid: session[0].tid }, {"$set": {
                 reviewing: true
             }})
             await db.client.close()
