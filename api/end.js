@@ -1,11 +1,17 @@
 const db = require("../modules/db")
 module.exports = (app) => {
     app.post("/end", async (req, res) => {
-        const { body } = req
-        if(!body || !body.uid) return res.status(404).json({ success: true, message: "UID not provided"})
+        const { body } = req.body
+        if(!body || !body.ruid) return res.status(400).json({ success: false, message: "RUID not provided" })
+        await db.client.connect()
+        const user = await db.collections.users.findOne({ ruid: body.ruid })
+        await db.client.close()
+        if(!user) return res.status(404).json({ success: false, message: "User not found or not registered" })
+        const d_user = app.client.users.cache.find(id => id.id === user.uid)
+        if(!d_user) return res.status(404).json({ success: false, message: "Could not find user"})
 
         await db.client.connect()
-        const thread = await db.collections.threads.findOne({ uid: body.uid, active: true, reviewed: false })
+        const thread = await db.collections.threads.findOne({ uid: d_user.id, active: true, reviewed: false })
         if(!thread) return res.status(404).send("Session not found");
 
         const channel = await app.client.channels.cache.get(thread.channel)
