@@ -12,14 +12,14 @@ module.exports = (app) => {
         }).sort({
             time: 1
         }).toArray()
-        data = data.slice(1, 10).map((item, index) => ({
+        data = data.map((item, index) => ({
             uid: item.uid,
             time: item.time,
             placement: index + 1
         }));
         await db.client.close()
 
-        return res.json(data)
+        return res.json({ success: true, data })
     })
     return {
         method: "GET",
