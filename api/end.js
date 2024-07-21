@@ -1,3 +1,4 @@
+const { MongoDBCollectionNamespace } = require("mongodb")
 const db = require("../modules/db")
 module.exports = (app) => {
     app.post("/end", async (req, res) => {
@@ -11,7 +12,9 @@ module.exports = (app) => {
         if(!d_user) return res.status(404).json({ success: false, message: "Could not find user"})
 
         await db.client.connect()
-        const thread = await db.collections.threads.findOne({ uid: d_user.id, active: true, reviewed: false })
+        const thread = await db.collections.threads.findOne({ uid: d_user.id, active: true })
+        await db.client.close()
+
         if(!thread) return res.status(404).send("Session not found");
 
         const channel = await app.client.channels.cache.get(thread.channel)
@@ -19,8 +22,8 @@ module.exports = (app) => {
             const thread = channel.threads.cache.find(id => id.id == thread.tid)
             if(thread){
                 thread.send("Session has been ended automatically!")
-
-                await db.collections.threads.updateOne({ tid: thread.tid, active: true, reviewed: false }, {"$set": {
+                await db.client.connect()
+                await db.collections.threads.updateOne({ tid: thread.tid, active: true }, {"$set": {
                     uid: thread.uid,
                     tid: thread.tid,
                     active: false,
